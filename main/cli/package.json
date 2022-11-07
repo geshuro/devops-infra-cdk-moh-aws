@@ -1,0 +1,56 @@
+{
+  "name": "@aws-ee/cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": ">= 14.0.0",
+    "pnpm": ">= 6.3.0"
+  },
+  "scripts": {
+    "cli": "ts-node --transpile-only --compiler typescript-cached-transpile --project ./tsconfig.json ./lib/main.ts",
+    "cli-debug": "ts-node --project ./tsconfig.json ./lib/main.ts",
+    "lint": "pnpm run compile && pnpm run lint:eslint && pnpm run lint:prettier",
+    "lint:eslint": "eslint --quiet --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "lint:prettier": "prettier --check --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "format": "pnpm run format:eslint && pnpm run format:prettier",
+    "format:eslint": "eslint --fix --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "format:prettier": "prettier --write --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "compile": "tsc --project ./tsconfig.json --noEmit",
+    "compile:watch": "tsc --project ./tsconfig.json --noEmit --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-ee/backend-api": "workspace:*",
+    "@aws-ee/backend-post-deployment": "workspace:*",
+    "@aws-ee/common": "workspace:*",
+    "@aws-ee/config": "workspace:*",
+    "@aws-ee/core-auth-cognito-infra": "workspace:*",
+    "@aws-ee/core-infra": "workspace:*",
+    "@aws-ee/core-post-deployment-infra": "workspace:*",
+    "@aws-ee/core-rest-api-infra": "workspace:*",
+    "@aws-ee/core-ui-infra": "workspace:*",
+    "@aws-ee/infrastructure": "workspace:*",
+    "@aws-ee/ui": "workspace:*",
+    "@aws-ee/vpc-infra": "workspace:*",
+    "@nestjs/common": "^7.6.13",
+    "@nestjs/core": "^7.6.13",
+    "chalk": "^4.1.0",
+    "figlet": "^1.5.0",
+    "local-cors-proxy": "^1.1.0",
+    "ts-node": "^9.1.1",
+    "typescript": "~4.5.2",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "@aws-ee/eslint-config": "workspace:*",
+    "@types/figlet": "^1.5.0",
+    "@types/node": "^14.14.35",
+    "@types/yargs": "^16.0.1",
+    "eslint": "^7.21.0",
+    "prettier": "^2.3.1",
+    "regenerator-runtime": "^0.13.7",
+    "typescript-cached-transpile": "^0.0.6"
+  }
+}

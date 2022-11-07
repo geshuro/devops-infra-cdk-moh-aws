@@ -1,0 +1,851 @@
+import React, { useState, useEffect, useRef } from 'react';
+import 'semantic-ui-css/semantic.min.css'
+import { Container, Header, Table, Rating, Button, Input, Segment, Form, Label, Sticky, Step, Icon, Message, Progress, Divider, Modal, Popup, Pagination } from 'semantic-ui-react';
+import PrismaImage from './PRISMA.png';
+
+/**
+APIs:
+
+WRONG! these are more like Service APIs, not related to Front-End, mask them
+- screeningRequest
+  - POST - create a request
+  - GET - list all requests with latests stages
+  - GET {@id} - returns current stage with its according data:
+    - { stage: "uploadCSV" }
+    - { stage: "processingCSV", processedCount: 10, totalCount: 100 }
+    - { stage: "screening1", documents: [...manual review, ...auto approved, ...auto rejected, ...all manual decisions] }
+    - How to get info about previous stages without resetting last state? different api/params?
+
+- decision
+  - POST {@id} - make a decision about an article { id: "job007-doc303", decision: "approve | reject" }
+  - POST - bulk
+
+- processCsv
+  - POST - upload a document
+  - {@id} GET - poll for progress
+
+
+
+
+
+
+
+
+
+  
+Presentation
+- api/screenings/ GET - list all
+- api/screenings/ POST - create new
+- api/screenings/{@id} GET - get a screening request at the most recent (!) stage
+- api/screenings/{@id}/{@stage} GET - get a screening request view at the specified stage
+- api/screenings/{@id}/{@stage}/downloadPdf GET - download ZIP
+- api/screenings/{@id}/{@stage}/downloadPdf/{@itemId} GET - download PDF
+
+Actions (ensure they are executed against proper resources):
+- api/action/uploadCsv POST { screeningRequestId, file, user }
+- api/action/decision POST { itemId, user, decision }
+  - itemId: <screening request #> - <document id>
+  - decision: pick | drop
+
+
+
+
+=======================
+-----  TABLES ---------
+=======================
+
+Screening requests
+--------------------------------------
+ScrReqId                ScrReqX
+CreatedBy               user0
+Stage                   created | uploadedCsv | processedCsv | screening1 | screening1summary | screening2 | evidenceTable
+StageStatus             | uploadedCsv: { automaticallyAssessed: 500, total: 1000 }
+                        | screening1: { requireReview: 100, total: 1000 }
+                        | screening2: { requireReview: 10, total: 30 }
+ClinicalQuestion        "are you healthy?"
+PICO-P                  30+ non-smoking males
+PICO-I                  paracetamol
+PICO-C                  ibuprofen
+PICO-O                  headache pain sensation reduction
+PICO-D                  randomized
+Screening1Assignees     [user1, user2]
+Screening2Assignees     [user3, user4]
+Csv                     s3://csv-bucket/ScrReqX.csv
+Finalized               false
+
+========================
+
+Documents/Articles:
+--------------------------------------
+ItemId                   ScrReqX-itemY
+ScrReqId                 ScrReqX
+Title                    TitleA
+Abstract                 AbstractB
+PdfLink                  LinkC
+AutomaticEvaluation      { id: AE1, model: Z, decision: D0, pico: [x1, x2, x3, x4, x5?] }
+                         # decision could be included for historic purposes,
+                         # but likely should be made based on pico match ratio / confidence
+DecisionsScreening1      [{ userId: U1, decision: D1 }, { userId: U2, decision: D2 }]
+DecisionsScreening2      null
+
+
+Derived values:
+- Evidence Table
+- PRISMA counts [ total items -> auto approved | auto rejected -> approved | rejected at screening | ]
+
+Views:
+- (for screening1 3-table split) filter by `AutomaticEvaluation.decision = Approved`
+
+========================
+
+Audit log:
+------------------------------------
+UserId            user0
+Action            approve screening 1       | bulk approve screening 1
+ActionMetadata    { itemId: scrReqX-itemY } | { items: [1, 2, ..., N] }
+
+========================
+
+
+
+
+
+*/
+
+enum Pages {
+  JOBS = 'JOBS',
+  CREATE_NEW_JOB = 'CREATE_NEW_JOB',
+  JOB = 'JOB',
+}
+
+interface WithNavigation {
+  navigateTo: (page: Pages) => void;
+}
+
+function Router() {
+  const [currentPage, navigateTo] = useState(Pages.JOBS);
+  switch (currentPage) {
+    case Pages.JOBS:
+      return <PageJobs navigateTo={navigateTo} />;
+    case Pages.CREATE_NEW_JOB:
+      return <PageCreateNewJob navigateTo={navigateTo} />;
+    case Pages.JOB:
+      return <PageJob navigateTo={navigateTo} />;
+    default:
+      throw new Error("no such page");
+  }
+}
+
+enum JobStage {
+  CREATED,
+  UPLOADED_CSV,
+  SCREENING_1,
+  SCREENING_1_SUMMARY,
+  SCREENING_2,
+  REVIEW_FINAL,
+}
+
+function JobSteps(props: { currentStage: JobStage, setStage: (stage: JobStage) => void }) {
+  const steps = [
+    "Upload CSV",
+    "Processing CSV",
+    "Screening 1",
+    "Screening 1 summary",
+    "Screening 2",
+    "Review Evidence Table",
+  ];
+  const activeStepIndex = props.currentStage;
+  return <Step.Group>
+    {steps.map((step, idx) => {
+      const status = (() => {
+        if (idx < activeStepIndex) {
+          return {};
+          return { active: true };
+        } else if (idx === activeStepIndex) {
+          return { active: true };
+        } else {
+          // TODO: remove
+          return {};
+          return { disabled: true };
+        }
+      })();
+      return <Step active={status.active} disabled={status.disabled} onClick={() => {
+        props.setStage(idx);
+      }}>
+        <Step.Content>
+          <Step.Description>{step}</Step.Description>
+        </Step.Content>
+      </Step>
+    })}
+  </Step.Group>;
+}
+
+function UploadCsv(props: { onUploadComplete: () => void }) {
+  const [progress, onProgressChange] = useState(-1);
+
+  const onChange = (e: any) => {
+    onProgressChange(50);
+    setTimeout(() => {
+      onProgressChange(100);
+    }, 1000);
+  }
+
+  if (progress === 100) {
+    props.onUploadComplete();
+  }
+
+  return <Segment basic>
+    <Form loading={progress >= 0 && progress < 100}>
+      <Button as="label" htmlFor="fileUploadId" type="button" size="large" primary>
+        <Icon name="upload" />
+        Upload CSV
+      </Button>
+      <input type="file" id="fileUploadId" style={{ display: "none" }} onChange={onChange} />
+    </Form>
+    <Header>Note: the CSV should be of the following format:</Header>
+    <Table celled padded>
+      <Table.Header>
+        <Table.Row>
+          <Table.HeaderCell>ID (DOI)</Table.HeaderCell>
+          <Table.HeaderCell>Title</Table.HeaderCell>
+          <Table.HeaderCell>Abstract</Table.HeaderCell>
+          <Table.HeaderCell>Link</Table.HeaderCell>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell>10.1097/YIC.0000000000000304</Table.Cell>
+          <Table.Cell>Example article</Table.Cell>
+          <Table.Cell>100-500 words of abstract</Table.Cell>
+          <Table.Cell>https://pubmed.ncbi.nlm.nih.gov/31972628/</Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table>
+  </Segment>
+}
+
+function ProcessingCsv(props: { documentsToProcess: number, onAllDocumentsProcessed: () => void }) {
+  const [processedCount, setProcessedCount] = useState(0);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setProcessedCount(processedCount + 1);
+    }, 200);
+    return () => {
+      clearInterval(intervalId);
+    };
+  });
+
+  if (processedCount === props.documentsToProcess) {
+    props.onAllDocumentsProcessed();
+  }
+
+  return <Progress value={processedCount} total={props.documentsToProcess} progress='ratio' active />;
+}
+
+function DocumentDecisionButtons(props: { id: string, status: boolean | undefined, decisionMadeBy: string | undefined, setDocumentStatus: (id: string, status: boolean | undefined) => void }) {
+  const neutral = <div style={{ display: "inline-block", width:  }}>
+    <Button color="green" onClick={() => props.setDocumentStatus(props.id, true)}>Approve</Button>
+    <Button color="red" onClick={() => props.setDocumentStatus(props.id, false)}>Discard</Button>
+  </div>;
+  const alreadyApproved = <div>
+    Approved {props.decisionMadeBy && "by @mmanzhos"}
+    <br />
+    <Button primary onClick={() => props.setDocumentStatus(props.id, undefined)}>Change decision</Button>
+  </div>;
+  const alreadyRejected = <div>
+    Rejected {props.decisionMadeBy && "by @mmanzhos"}
+    <br />
+    <Button primary onClick={() => props.setDocumentStatus(props.id, undefined)}>Change decision</Button>
+  </div>;
+
+  if (props.status === undefined) {
+    return neutral;
+  } else if (props.status === true) {
+    return alreadyApproved;
+  } else {
+    return alreadyRejected;
+  }
+}
+
+interface ScreeningTableRow {
+  id: string;
+  title: string;
+  abstract: string;
+  pico: [number, number, number, number];
+  status: boolean | undefined;
+  decisionMadeBy: string | undefined;
+}
+
+function PicoLetters(props: { percentages: number[] }) {
+  const getLetterColor = (percent: number) => {
+    if (percent >= 0 && percent < 100 / 3) {
+      return "#ffebeb"; // red-ish
+    } else if (percent >= 100 / 3 && percent < 200 / 3) {
+      return "#fff0d3"; // orange-ish
+    } else if (percent >= 200 / 3 && percent <= 100) {
+      return "#eaffea"; // green-ish
+    } else {
+      return "black";
+    }
+  }
+  return <Table.Row>
+    {["P", "I", "C", "O"].map((letter, i) => {
+      return <Popup content={`${props.percentages[i]}%`} trigger={<Table.Cell style={{ backgroundColor: getLetterColor(props.percentages[i]) }}>{letter}</Table.Cell>} />
+    })}
+  </Table.Row>;
+}
+
+function Screening1Table(props: { rows: ScreeningTableRow[], setDocumentStatus: (id: string, status: boolean | undefined) => void }) {
+  return <div>
+    <Form>
+      <Form.Group>
+        <Form.Input label='Filter' icon='search' placeholder='supraphysiological level of estrogene' width="6" />
+        <Form.Dropdown selection fluid label='Sort by' width="6" placeholder="Select" options={[
+          { key: '1', value: 'date_published', text: 'Date Published' },
+          { key: '1', value: 'citations', text: 'Citations' },
+        ]} />
+      </Form.Group>
+    </Form>
+    <Table celled padded tableData={props.rows}>
+    <Table.Header>
+      <Table.Row>
+        <Table.HeaderCell>Title</Table.HeaderCell>
+        <Table.HeaderCell>PICO scores</Table.HeaderCell>
+        <Table.HeaderCell>Decision</Table.HeaderCell>
+      </Table.Row>
+    </Table.Header>
+    <Table.Body>
+      {props.rows.map((data, index) => {
+        const styling = (() => {
+          if (data.status === undefined)
+            return {};
+          else if (data.status === true)
+            return { positive: true };
+          else
+            return { negative: true };
+        })();
+        return <Table.Row {...styling}>
+          <Table.Cell>
+            <b><a href="amazon.com" target="_blank">{data.title}</a></b>
+          </Table.Cell>
+          <Table.Cell>
+            <Table basic="very" textAlign="center">
+              <Table.Body>
+                <PicoLetters percentages={data.pico} />
+              </Table.Body>
+            </Table>
+          </Table.Cell>
+          <Table.Cell>
+            <DocumentDecisionButtons id={data.id} status={data.status} setDocumentStatus={props.setDocumentStatus} decisionMadeBy={data.decisionMadeBy} />
+          </Table.Cell>
+        </Table.Row>
+      })}
+    </Table.Body>
+  </Table>
+  <Pagination defaultActivePage={5} totalPages={10} />
+  </div>;
+}
+
+function ConfirmationModal(props: { trigger: React.ReactNode, actionText: string, onAccept: () => void, onReject: () => void }) {
+  const [open, setOpen] = React.useState(false);
+  return <Modal
+    onClose={() => setOpen(false)}
+    onOpen={() => setOpen(true)}
+    open={open}
+    trigger={props.trigger}
+  >
+    <Modal.Header>WARNING</Modal.Header>
+    <Modal.Content>
+      <Modal.Description>
+        <Header>You are about to {props.actionText}</Header>
+      </Modal.Description>
+    </Modal.Content>
+    <Modal.Actions>
+      <Button color='black' onClick={() => {
+        props.onReject();
+        setOpen(false);
+      }}>
+        Nope
+      </Button>
+      <Button
+        content="Yep, that's me"
+        labelPosition='right'
+        icon='checkmark'
+        onClick={() => {
+          props.onAccept();
+          setOpen(false);
+        }}
+        positive
+      />
+    </Modal.Actions>
+  </Modal>;
+}
+
+function Screening1(props: { onShowSummary: () => void }) {
+  const [documentsStatus, setDocumentsStatus] = useState<{ [key: string]: { status: boolean, decisionMadeBy?: string } }>({});
+  const setDocumentStatus = (id: string, status: boolean | undefined) => {
+    if (status === undefined) {
+      delete documentsStatus[id];
+      setDocumentsStatus({ ...documentsStatus });
+    } else {
+      setDocumentsStatus({ ...documentsStatus, [id]: { status, decisionMadeBy: "mmanzhos" } });
+    }
+  };
+  const setBulkDocumentStatus = (ids: string[], status: boolean | undefined) => {
+    ids.forEach(id => {
+      if (status === undefined) {
+        delete documentsStatus[id];
+      } else {
+        documentsStatus[id] = { status, decisionMadeBy: "mmanzhos" };
+      }
+    });
+    setDocumentsStatus({ ...documentsStatus });
+  };
+  const tableRows: ScreeningTableRow[] = [
+    {
+      id: "0-1",
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      abstract: "This double-blind, randomized study evaluated the efficacy and safety of trazodone OAD (once-a-day) in comparison with venlafaxine XR (extended-release) in 324 patients (166 trazodone and 158 venlafaxine) with major depressive disorder (MDD). The primary efficacy endpoint was the mean change from baseline in the 17-item Hamilton Depression Rating Scale (HAM-D) at week 8. Both treatments were effective in reducing the HAM-D-17 total score at week 8 vs. baseline (intent-to-treat: trazodone -12.9, venlafaxine -14.7; per protocol: trazodone -15.4, venlafaxine -16.4). Patients in the venlafaxine group achieved better results after 8 weeks, whereas the trazodone group achieved a statistically significant reduction in HAM-D-17 following only 7 days of treatment. The most frequent adverse events (AEs) were dizziness and somnolence in the trazodone group, and nausea and headache in the venlafaxine group. Most AEs were mild-to-moderate in severity. This study confirmed that both venlafaxine XR and trazodone OAD may represent a valid treatment option for patients with MDD. ",
+      pico: [100, 1, 50, 99],
+      status: undefined,
+      decisionMadeBy: undefined
+    },
+    {
+      id: "0-2",
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      abstract: "This double-blind, randomized study evaluated the efficacy and safety of trazodone OAD (once-a-day) in comparison with venlafaxine XR (extended-release) in 324 patients (166 trazodone and 158 venlafaxine) with major depressive disorder (MDD). The primary efficacy endpoint was the mean change from baseline in the 17-item Hamilton Depression Rating Scale (HAM-D) at week 8. Both treatments were effective in reducing the HAM-D-17 total score at week 8 vs. baseline (intent-to-treat: trazodone -12.9, venlafaxine -14.7; per protocol: trazodone -15.4, venlafaxine -16.4). Patients in the venlafaxine group achieved better results after 8 weeks, whereas the trazodone group achieved a statistically significant reduction in HAM-D-17 following only 7 days of treatment. The most frequent adverse events (AEs) were dizziness and somnolence in the trazodone group, and nausea and headache in the venlafaxine group. Most AEs were mild-to-moderate in severity. This study confirmed that both venlafaxine XR and trazodone OAD may represent a valid treatment option for patients with MDD. ",
+      pico: [100, 1, 30, 99],
+      status: undefined,
+      decisionMadeBy: undefined
+    }
+  ];
+  tableRows.forEach(row => {
+    if (!documentsStatus[row.id])
+      return;
+
+    row.status = documentsStatus[row.id].status;
+    row.decisionMadeBy = documentsStatus[row.id].decisionMadeBy;
+  });
+
+  const approvedRows: ScreeningTableRow[] = [
+    {
+      id: "1-1",
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      abstract: "This double-blind, randomized study evaluated the efficacy and safety of trazodone OAD (once-a-day) in comparison with venlafaxine XR (extended-release) in 324 patients (166 trazodone and 158 venlafaxine) with major depressive disorder (MDD). The primary efficacy endpoint was the mean change from baseline in the 17-item Hamilton Depression Rating Scale (HAM-D) at week 8. Both treatments were effective in reducing the HAM-D-17 total score at week 8 vs. baseline (intent-to-treat: trazodone -12.9, venlafaxine -14.7; per protocol: trazodone -15.4, venlafaxine -16.4). Patients in the venlafaxine group achieved better results after 8 weeks, whereas the trazodone group achieved a statistically significant reduction in HAM-D-17 following only 7 days of treatment. The most frequent adverse events (AEs) were dizziness and somnolence in the trazodone group, and nausea and headache in the venlafaxine group. Most AEs were mild-to-moderate in severity. This study confirmed that both venlafaxine XR and trazodone OAD may represent a valid treatment option for patients with MDD. ",
+      pico: [100, 78, 80, 90],
+      status: undefined,
+      decisionMadeBy: undefined
+    }
+  ];
+  approvedRows.forEach(row => {
+    if (!documentsStatus[row.id])
+      return;
+
+    row.status = documentsStatus[row.id].status;
+    row.decisionMadeBy = documentsStatus[row.id].decisionMadeBy;
+  });
+
+  const rejectedRows: ScreeningTableRow[] = [
+    {
+      id: "2-1",
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      abstract: "This double-blind, randomized study evaluated the efficacy and safety of trazodone OAD (once-a-day) in comparison with venlafaxine XR (extended-release) in 324 patients (166 trazodone and 158 venlafaxine) with major depressive disorder (MDD). The primary efficacy endpoint was the mean change from baseline in the 17-item Hamilton Depression Rating Scale (HAM-D) at week 8. Both treatments were effective in reducing the HAM-D-17 total score at week 8 vs. baseline (intent-to-treat: trazodone -12.9, venlafaxine -14.7; per protocol: trazodone -15.4, venlafaxine -16.4). Patients in the venlafaxine group achieved better results after 8 weeks, whereas the trazodone group achieved a statistically significant reduction in HAM-D-17 following only 7 days of treatment. The most frequent adverse events (AEs) were dizziness and somnolence in the trazodone group, and nausea and headache in the venlafaxine group. Most AEs were mild-to-moderate in severity. This study confirmed that both venlafaxine XR and trazodone OAD may represent a valid treatment option for patients with MDD. ",
+      pico: [10, 20, 5, 12],
+      status: undefined,
+      decisionMadeBy: undefined
+    }
+  ];
+  rejectedRows.forEach(row => {
+    if (!documentsStatus[row.id])
+      return;
+
+    row.status = documentsStatus[row.id].status;
+    row.decisionMadeBy = documentsStatus[row.id].decisionMadeBy;
+  });
+
+  /* useEffect(() => {
+    approvedRows.forEach(row => {
+      // TODO causes a bug of being unable to Change Decision
+      documentsStatus[row.id] = { status: true };
+    });
+    rejectedRows.forEach(row => {
+      documentsStatus[row.id] = { status: false };
+    });
+    setDocumentsStatus({ ...documentsStatus });
+  }); */
+
+
+  const leftToReview = tableRows.length - Object.keys(documentsStatus).filter(key => tableRows.find(el => el.id === key)).length;
+
+
+  const [showBulkActions, setShowBulkActions] = useState(false);
+  const discardAllButton = <Button color="red" floated="right">Discard All</Button>;
+  const acceptAllButton = <Button color="green" floated="right">Approve All</Button>;
+
+  return <div>
+    <br />
+    <Header>
+      Documents that require manual review: {leftToReview}
+      {leftToReview === 0 && <Button primary style={{ marginLeft: "2em" }} onClick={props.onShowSummary}>Show summary for submitting to Screening #2</Button>}
+      {!showBulkActions && <Button floated="right" onClick={() => setShowBulkActions(true)}>Show bulk actions</Button>}
+      {showBulkActions && <ConfirmationModal
+        actionText={"discard all articles pending manual review"}
+        trigger={discardAllButton}
+        onAccept={() => {
+          setBulkDocumentStatus(tableRows.map(row => row.id), false);
+        }}
+        onReject={() => undefined}
+      />}
+      {showBulkActions && <ConfirmationModal
+        actionText={"accept all articles pending manual review"}
+        trigger={acceptAllButton}
+        onAccept={() => {
+          setBulkDocumentStatus(tableRows.map(row => row.id), true);
+        }}
+        onReject={() => undefined}
+      />}
+    </Header>
+    <br />
+    <Screening1Table rows={tableRows} setDocumentStatus={setDocumentStatus} />
+    <br />
+    <br />
+    <Header>Documents automatically approved</Header>
+    <Screening1Table rows={approvedRows} setDocumentStatus={setDocumentStatus} />
+    <br />
+    <br />
+    <Header>Documents automatically rejected</Header>
+    <Screening1Table rows={rejectedRows} setDocumentStatus={setDocumentStatus} />
+    <br />
+    <br />
+    <br />
+    <br />
+  </div>;
+}
+
+type ScreeningTable2Row = Omit<ScreeningTableRow, "pico">;
+
+// TODO: merge/reuse (?) with Screening1()
+function Screening2(props: { onComplete: () => void }) {
+  const [documentsStatus, setDocumentsStatus] = useState<{ [key: string]: { status: boolean, decisionMadeBy?: string } }>({});
+  const setDocumentStatus = (id: string, status: boolean | undefined) => {
+    if (status === undefined) {
+      delete documentsStatus[id];
+    } else {
+      documentsStatus[id] = { status, decisionMadeBy: "mmanzhos" };
+    }
+    setDocumentsStatus({ ...documentsStatus });
+  };
+  const tableRows: ScreeningTable2Row[] = [
+    {
+      id: "0-1",
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      abstract: "This double-blind, randomized study evaluated the efficacy and safety of trazodone OAD (once-a-day) in comparison with venlafaxine XR (extended-release) in 324 patients (166 trazodone and 158 venlafaxine) with major depressive disorder (MDD). The primary efficacy endpoint was the mean change from baseline in the 17-item Hamilton Depression Rating Scale (HAM-D) at week 8. Both treatments were effective in reducing the HAM-D-17 total score at week 8 vs. baseline (intent-to-treat: trazodone -12.9, venlafaxine -14.7; per protocol: trazodone -15.4, venlafaxine -16.4). Patients in the venlafaxine group achieved better results after 8 weeks, whereas the trazodone group achieved a statistically significant reduction in HAM-D-17 following only 7 days of treatment. The most frequent adverse events (AEs) were dizziness and somnolence in the trazodone group, and nausea and headache in the venlafaxine group. Most AEs were mild-to-moderate in severity. This study confirmed that both venlafaxine XR and trazodone OAD may represent a valid treatment option for patients with MDD. ",
+      status: undefined,
+      decisionMadeBy: undefined
+    },
+    {
+      id: "0-2",
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      abstract: "This double-blind, randomized study evaluated the efficacy and safety of trazodone OAD (once-a-day) in comparison with venlafaxine XR (extended-release) in 324 patients (166 trazodone and 158 venlafaxine) with major depressive disorder (MDD). The primary efficacy endpoint was the mean change from baseline in the 17-item Hamilton Depression Rating Scale (HAM-D) at week 8. Both treatments were effective in reducing the HAM-D-17 total score at week 8 vs. baseline (intent-to-treat: trazodone -12.9, venlafaxine -14.7; per protocol: trazodone -15.4, venlafaxine -16.4). Patients in the venlafaxine group achieved better results after 8 weeks, whereas the trazodone group achieved a statistically significant reduction in HAM-D-17 following only 7 days of treatment. The most frequent adverse events (AEs) were dizziness and somnolence in the trazodone group, and nausea and headache in the venlafaxine group. Most AEs were mild-to-moderate in severity. This study confirmed that both venlafaxine XR and trazodone OAD may represent a valid treatment option for patients with MDD. ",
+      status: undefined,
+      decisionMadeBy: undefined
+    }
+  ];
+  tableRows.forEach(row => {
+    if (!documentsStatus[row.id])
+      return;
+
+    row.status = documentsStatus[row.id].status;
+    row.decisionMadeBy = documentsStatus[row.id].decisionMadeBy;
+  });
+
+  const leftToReview = tableRows.length - Object.keys(documentsStatus).length;
+  return <div>
+    <Header>
+      Review documents to be included into Evidence Table
+      <Button style={{ marginLeft: "2em" }}>Download all PDFs</Button>
+      <Button disabled={leftToReview > 0} primary style={{ marginLeft: "2em" }} onClick={props.onComplete}>Review collected Evidence Table and PRISM</Button>
+    </Header>
+    <Screening2Table rows={tableRows} setDocumentStatus={setDocumentStatus} />
+    <br />
+    <br />
+  </div>;
+}
+
+
+function Screening2Table(props: { rows: ScreeningTable2Row[], setDocumentStatus: (id: string, status: boolean | undefined) => void }) {
+  return <Table celled padded tableData={props.rows}>
+    <Table.Header>
+      <Table.Row>
+        <Table.HeaderCell>Title / Abstract</Table.HeaderCell>
+        <Table.HeaderCell>View PDF</Table.HeaderCell>
+        <Table.HeaderCell>Decision</Table.HeaderCell>
+      </Table.Row>
+    </Table.Header>
+    <Table.Body>
+      {props.rows.map((data, index) => {
+        const styling = (() => {
+          if (data.status === undefined)
+            return {};
+          else if (data.status === true)
+            return { positive: true };
+          else
+            return { negative: true };
+        })();
+        return <Table.Row {...styling}>
+          <Table.Cell>
+            <b>{data.title} </b>
+            <br />
+            <p>
+              {data.abstract}
+            </p>
+          </Table.Cell>
+          <Table.Cell>
+            <Button>View PDF</Button>
+          </Table.Cell>
+          <Table.Cell>
+            <DocumentDecisionButtons id={data.id} status={data.status} setDocumentStatus={props.setDocumentStatus} decisionMadeBy={data.decisionMadeBy} />
+          </Table.Cell>
+        </Table.Row>
+      })}
+    </Table.Body>
+  </Table>
+}
+
+
+function Screening1Summary(props: { onReviewAgain: () => void, onSubmit: () => void }) {
+  const conflicts = [
+    {
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      decisions: [
+        { madeBy: "@max", status: false },
+        { madeBy: "@mmanzhos", status: true },
+      ]
+    },
+    {
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      decisions: [
+        { madeBy: "@max", status: false },
+        { madeBy: "@mmanzhos", status: true },
+      ]
+    }
+  ];
+  const accepted = [
+    {
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      decisions: [
+        { madeBy: "@max", status: true },
+        { madeBy: "@mmanzhos", status: true },
+      ]
+    },
+    {
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      decisions: [
+        { madeBy: "Model-RX215", status: true },
+        { madeBy: "@mmanzhos", status: true },
+      ]
+    }
+  ];
+  const rejected = [
+    {
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      decisions: [
+        { madeBy: "@mmanzhos", status: false },
+        { madeBy: "@max", status: false },
+      ]
+    },
+    {
+      title: "A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder",
+      decisions: [
+        { madeBy: "Model-RX215", status: false },
+        { madeBy: "@mmanzhos", status: false },
+      ]
+    }
+  ];
+  return <div>
+    <Button primary size="large" onClick={props.onReviewAgain} >Review again</Button>
+    <Button size="large" onClick={props.onSubmit} >Submit for Screening 2</Button>
+    <Header>Conflicts: {conflicts.length}</Header>
+    <Screening1SummaryTable rows={conflicts} />
+    <Header>Mutually Accepted: {accepted.length}</Header>
+    <Screening1SummaryTable rows={accepted} />
+    <Header>Mutually Rejected: {rejected.length}</Header>
+    <Screening1SummaryTable rows={rejected} />
+  </div>;
+}
+
+function Screening1SummaryTable(props: { rows: Array<{ title: string, decisions: Array<{ madeBy: string, status: boolean }> }> }) {
+  return <Table celled padded>
+    <Table.Header>
+      <Table.Row>
+        <Table.HeaderCell>Title</Table.HeaderCell>
+        <Table.HeaderCell>Decision by</Table.HeaderCell>
+      </Table.Row>
+    </Table.Header>
+    <Table.Body>
+      {props.rows.map((data, index) => {
+        if (data.decisions.length < 1) {
+          throw new Error("must provide a decision");
+        }
+        const agreed = data.decisions.filter(v => v.status === true);
+        const rejected = data.decisions.filter(v => v.status === false);
+        const styling = (() => {
+          if (agreed.length === data.decisions.length) {
+            return { positive: true };
+          } else if (rejected.length === data.decisions.length)
+            return { negative: true };
+          else
+            return { style: { backgroundColor: "orange" } };
+        })();
+        return <Table.Row {...styling}>
+          <Table.Cell>{data.title}</Table.Cell>
+          <Table.Cell>{data.decisions.map(v => {
+            return v.status ? <p>Accepted by {v.madeBy}</p> : <p>Rejected by {v.madeBy}</p>
+          })}</Table.Cell>
+        </Table.Row>
+      })}
+    </Table.Body>
+  </Table>;
+}
+
+function JobStageComponent(props: { stage: JobStage, setStage: (stage: JobStage) => void }) {
+  switch (props.stage) {
+    case JobStage.CREATED:
+      return <UploadCsv onUploadComplete={() => props.setStage(JobStage.UPLOADED_CSV)} />;
+    case JobStage.UPLOADED_CSV:
+      return <ProcessingCsv documentsToProcess={30} onAllDocumentsProcessed={() => props.setStage(JobStage.SCREENING_1)} />;
+    case JobStage.SCREENING_1:
+      return <Screening1 onShowSummary={() => props.setStage(JobStage.SCREENING_1_SUMMARY)} />;
+    case JobStage.SCREENING_1_SUMMARY:
+      return <Screening1Summary onReviewAgain={() => props.setStage(JobStage.SCREENING_1)} onSubmit={() => props.setStage(JobStage.SCREENING_2)} />;
+    case JobStage.SCREENING_2:
+      return <Screening2 onComplete={() => props.setStage(JobStage.REVIEW_FINAL)} />;
+    case JobStage.REVIEW_FINAL:
+      return <div>
+        <a target="_blank" href="https://estech.shinyapps.io/prisma_flowdiagram/">PRISM diagram tool</a>
+        <img style={{ width: "100%" }} src={PrismaImage} alt="prisma diagram example" />
+      </div>;
+        default:
+      throw new Error("no such job stage");
+  }
+}
+
+function PageJob(props: WithNavigation) {
+  const contextRef = useRef();
+
+  const [stage, setStage] = useState(JobStage.CREATED);
+  return <Container textAlign="left">
+    <Segment basic>
+      <Header size="large">Screening Request #007 <Button primary style={{ marginLeft: "2em" }}>Edit</Button></Header>
+    </Segment>
+    <Segment basic ref={contextRef}>
+      <Sticky context={contextRef.current}>
+        <Header style={{ background: "white", padding: "1em" }} size="small">Request: A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder</Header>
+      </Sticky>
+      <JobSteps currentStage={stage} setStage={setStage} />
+      <JobStageComponent stage={stage} setStage={setStage} />
+    </Segment>
+  </Container>;
+}
+
+function PageCreateNewJob(props: WithNavigation) {
+  return <Container textAlign="left">
+    <Segment basic>
+      <Header size="large">New Screening Request</Header>
+    </Segment>
+    <Segment basic>
+      <Form>
+        <Form.Field required>
+          <label>Clinical question</label>
+          <Input placeholder='Clinical question' />
+          <Label pointing>Can't be changed later.</Label>
+        </Form.Field>
+        <Form.Field>
+          <label>Description</label>
+          <Form.TextArea placeholder='Description' />
+        </Form.Field>
+        <Header>PICO</Header>
+        <Form.Input label='Person' placeholder='50-60 years old female smoker' required />
+        <Form.Input label='Intervention' placeholder='lifestyle change, exercises' required />
+        <Form.Input label='Comparator' placeholder='placebo band-aid resembling treatment' required />
+        <Form.Input label='Outcome' placeholder='lung cancer risk reduction' required />
+        <Form.Input label='Design (optional)' placeholder='double-blind randomized p60' />
+        <Button primary size="large" type='submit' onClick={e => {
+          e.preventDefault();
+          props.navigateTo(Pages.JOB);
+        }}>Create</Button>
+      </Form>
+    </Segment>
+  </Container>;
+}
+
+function PageJobs(props: WithNavigation) {
+  return <Container textAlign="left">
+    <Segment basic>
+      <Header size="large">Screening Requests <Button primary style={{ marginLeft: "2em" }} onClick={(e) => { e.preventDefault(); props.navigateTo(Pages.CREATE_NEW_JOB); }}>Create new</Button></Header>
+    </Segment>
+    <Segment basic>
+      <Input icon='search' placeholder='Search...' />
+      <Button.Group basic floated="right">
+        <Button>In progress</Button>
+        <Button>Completed</Button>
+        <Button>All</Button>
+      </Button.Group>
+    </Segment>
+    <Table celled padded>
+      <Table.Header>
+        <Table.Row>
+          <Table.HeaderCell>Request</Table.HeaderCell>
+          <Table.HeaderCell>Assignees</Table.HeaderCell>
+          <Table.HeaderCell>Status</Table.HeaderCell>
+          <Table.HeaderCell>Start date</Table.HeaderCell>
+          <Table.HeaderCell>Action</Table.HeaderCell>
+        </Table.Row>
+      </Table.Header>
+
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell>
+            A randomized, double-blind study comparing the efficacy and safety of trazodone once-a-day and venlafaxine extended-release for the treatment of patients with major depressive disorder
+            <br />
+            <br />
+            <i>Extracted PICOs: </i><br />
+            P: -; I: trazodone; C: venlafaxine; O: major depressive disorder
+            <br />
+            P: -; I: venlafaxine; C: trazodone; O: major depressive disorder
+          </Table.Cell>
+          <Table.Cell>
+            Screening 1: Joanna Z, Pedro J.
+            <br />
+            Screening 2: Zeko R, Isabella K.
+          </Table.Cell>
+          <Table.Cell>
+            Screening 1
+            <br />
+            <b>36 papers require review</b>
+            <br />
+            301 satisfied PICO criteria
+            <br />
+            3630 discarded
+          </Table.Cell>
+          <Table.Cell>
+            20/05/2021
+          </Table.Cell>
+          <Table.Cell>
+            <Button primary>Review</Button>
+          </Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table>
+  </Container>;
+}
+
+function App() {
+  return (
+    <div className="App">
+      <Router />
+    </div>
+  );
+}
+
+export default App;

@@ -1,0 +1,7 @@
+{
+  "extends": ["@aws-ee"],
+  "rules": {
+    "you-dont-need-lodash-underscore/first": "warn",
+    "you-dont-need-lodash-underscore/is-nil": "warn"
+  }
+}

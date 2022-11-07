@@ -1,0 +1,20 @@
+{
+  "extends": ["@aws-ee"],
+  "rules": {
+    "default-param-last": "warn",
+    "you-dont-need-lodash-underscore/is-nil": "warn",
+    "you-dont-need-lodash-underscore/ends-with": "warn",
+    "you-dont-need-lodash-underscore/is-function": "warn",
+    "you-dont-need-lodash-underscore/is-string": "warn",
+    "you-dont-need-lodash-underscore/keys": "warn",
+    "you-dont-need-lodash-underscore/trim": "warn",
+    "you-dont-need-lodash-underscore/starts-with": "warn",
+    "you-dont-need-lodash-underscore/is-array": "warn",
+    "you-dont-need-lodash-underscore/concat": "warn",
+    "you-dont-need-lodash-underscore/reverse": "warn",
+    "you-dont-need-lodash-underscore/slice": "warn",
+    "you-dont-need-lodash-underscore/join": "warn",
+    "you-dont-need-lodash-underscore/split": "warn",
+    "you-dont-need-lodash-underscore/is-undefined": "warn"
+  }
+}

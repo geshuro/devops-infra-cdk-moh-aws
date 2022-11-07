@@ -1,0 +1,11 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./.build" /* Redirect output structure to the directory. */,
+    // "rootDir": "lib" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
+    "noImplicitAny": false /* Raise error on expressions and declarations with an implied 'any' type. */,
+    "useUnknownInCatchVariables": false
+  },
+  "include": ["__tests__/**/*.ts", "support/**/*"],
+  "exclude": ["node_modules", "**/node_modules/*"]
+}

@@ -1,0 +1,99 @@
+{
+  "Entities": [
+    {
+      "Id": 0,
+      "Text": "Pain Relief",
+      "Category": "MEDICAL_CONDITION",
+      "Type": "DX_NAME",
+      "Score": 0.45861074328422546,
+      "BeginOffset": 626,
+      "EndOffset": 637,
+      "Attributes": [],
+      "Traits": [
+        {
+          "Name": "SYMPTOM",
+          "Score": 0.48259106278419495
+        },
+        {
+          "Name": "DIAGNOSIS",
+          "Score": 0.595464289188385
+        }
+      ],
+      "ICD10CMConcepts": [
+        {
+          "Description": "Pain, unspecified",
+          "Code": "R52",
+          "Score": 0.8066088557243347
+        },
+        {
+          "Description": "Other acute postprocedural pain",
+          "Code": "G89.18",
+          "Score": 0.7024954557418823
+        },
+        {
+          "Description": "Gas pain",
+          "Code": "R14.1",
+          "Score": 0.6655268669128418
+        },
+        {
+          "Description": "Pain, not elsewhere classified",
+          "Code": "G89",
+          "Score": 0.606543242931366
+        },
+        {
+          "Description": "Other abdominal pain",
+          "Code": "R10.8",
+          "Score": 0.5863987803459167
+        }
+      ]
+    },
+    {
+      "Id": 1,
+      "Text": "Adverse effects",
+      "Category": "MEDICAL_CONDITION",
+      "Type": "DX_NAME",
+      "Score": 0.9317322373390198,
+      "BeginOffset": 639,
+      "EndOffset": 654,
+      "Attributes": [],
+      "Traits": [
+        {
+          "Name": "SYMPTOM",
+          "Score": 0.5338788032531738
+        },
+        {
+          "Name": "DIAGNOSIS",
+          "Score": 0.5275403261184692
+        }
+      ],
+      "ICD10CMConcepts": [
+        {
+          "Description": "Adverse effects, not elsewhere classified",
+          "Code": "T78",
+          "Score": 0.2434024065732956
+        },
+        {
+          "Description": "Other adverse effects, not elsewhere classified",
+          "Code": "T78.8",
+          "Score": 0.2036907970905304
+        },
+        {
+          "Description": "Other adverse effects, not elsewhere classified, initial encounter",
+          "Code": "T78.8XXA",
+          "Score": 0.1997232288122177
+        },
+        {
+          "Description": "Adverse effect of unspecified anesthetic, initial encounter",
+          "Code": "T41.45XA",
+          "Score": 0.17444296181201935
+        },
+        {
+          "Description": "Adverse effect of antipruritics",
+          "Code": "T49.1X5",
+          "Score": 0.14854396879673004
+        }
+      ]
+    }
+  ],
+  "ModelVersion": "0.1.0"
+}

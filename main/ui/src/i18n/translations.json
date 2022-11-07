@@ -1,0 +1,78 @@
+{
+  "en": {
+    "values": {
+      "LOADING_TITLE": "Just one second",
+      "LOADING_SUBTITLE": "Great things are now happening, please wait!",
+      "DEFAULT_ERROR_MESSAGE": "See if refreshing the browser will resolve your issue.",
+      "APP_ERROR_MESSAGE": "Something went wrong and the error message is %{errorDetail}.  Please refresh your browser.",
+      "LOGIN": "Login",
+      "LOGOUT": "Logout",
+      "USERNAME": "Username",
+      "PASSWORD": "Password",
+      "USERNAME_REQUIRED": "username is required",
+      "USERNAME_MIN_LENGTH": "username must be at least 3 characters long",
+      "PASSWORD_REQUIRED": "password is required",
+      "PASSWORD_MIN_LENGTH": "password must be at least 4 characters long",
+      "WE_HAVE_A_PROBLEM": "We have a problem!",
+      "WARNING": "Warning!",
+      "SUBMITTED": "Submitted!",
+      "FORM_SUBMISSION_PROBLEM": "The form submission has a problem.",
+      "ISSUES_WITH_FORM": [
+        [
+          0,
+          0,
+          "There are issues with the form:"
+        ],
+        [
+          1,
+          1,
+          "There is an issues with the form:"
+        ],
+        [
+          2,
+          null,
+          "There are issues with the form:"
+        ]
+      ],
+      "UNKNOWN_ERROR": "Unknown error",
+      "MENU_DASHBOARD": "Dashboard",
+      "MENU_AUTH": "Auth",
+      "MENU_USERS": "Users",
+      "MENU_API_KEYS": "API Keys",
+      "MENU_VERSION": "Version",
+      "CONFIRM": "Confirm",
+      "CANCEL": "Cancel",
+      "DONE": "Done"
+    }
+  },
+  "ja": {
+    "values": {
+      "LOADING_TITLE": "少々待ちください",
+      "LOADING_SUBTITLE": "ローディング中",
+      "DEFAULT_ERROR_MESSAGE": "ブラウザを更新してください",
+      "APP_ERROR_MESSAGE": "Something went wrong and the error message is %{errorDetail}.  Please refresh your browser.",
+      "LOGIN": "ログイン",
+      "LOGOUT": "ログアウト",
+      "USERNAME": "ユーザー名",
+      "PASSWORD": "パースワード",
+      "USERNAME_REQUIRED": "ユーザー名が必要です",
+      "USERNAME_MIN_LENGTH": "ユーザー名は3文字以上にする必要があります",
+      "PASSWORD_REQUIRED": "パースワードが必要です",
+      "PASSWORD_MIN_LENGTH": "ユーザー名は4文字以上にする必要があります",
+      "WE_HAVE_A_PROBLEM": "問題があります！",
+      "WARNING": "警告",
+      "SUBMITTED": "送信されました",
+      "FORM_SUBMISSION_PROBLEM": "フォームの送信に問題があります",
+      "ISSUES_WITH_FORM": "フォームに問題があります：",
+      "UNKNOWN_ERROR": "不明なエラー",
+      "MENU_DASHBOARD": "ダッシュボード",
+      "MENU_AUTH": "認証",
+      "MENU_USERS": "ユーザー",
+      "MENU_API_KEYS": "APIキー",
+      "MENU_VERSION": "版",
+      "CONFIRM": "確認",
+      "CANCEL": "キャンセル",
+      "DONE": "終了"
+    }
+  }
+}

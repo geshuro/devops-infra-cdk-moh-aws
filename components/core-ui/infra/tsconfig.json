@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // "outDir": "./lib" /* Redirect output structure to the directory. */,
+    "rootDir": "lib" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
+    "noUnusedLocals": false /* Report errors on unused locals. */,
+    "noUnusedParameters": false /* Report errors on unused parameters. */,
+  },
+  "include": ["lib/**/*.ts"],
+  "exclude": ["node_modules", "**/node_modules/*", "**/dist/**"]
+}

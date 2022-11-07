@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./.build" /* Redirect output structure to the directory. */,
+    "rootDir": "lib" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
+    "resolveJsonModule": true /* Remove when JSON Schema validation is replaced */
+  },
+  "include": ["lib/**/*.ts"],
+  "exclude": ["node_modules", "**/node_modules/*", "**/dist/**"]
+}

@@ -1,0 +1,42 @@
+import { IsIn, IsString } from 'class-validator';
+
+export const enum StatusEnum {
+  CREATED = 'CREATED',
+  UPLOADED_CSV = 'UPLOADED_CSV',
+  PROCESSED_CSV = 'PROCESSED_CSV',
+  SCREENING1_WIP = 'SCREENING1_WIP',
+  SCREENING1_AWAITING_DECISION = 'SCREENING1_AWAITING_DECISION',
+  SCREENING1_COMPLETE = 'SCREENING1_COMPLETE',
+  SCREENING2_WIP = 'SCREENING2_WIP',
+  SCREENING2_AWAITING_DECISION = 'SCREENING2_AWAITING_DECISION',
+  SCREENING2_COMPLETE = 'SCREENING2_COMPLETE',
+  EVIDENCE_TABLE_COMPLETE = 'EVIDENCE_TABLE_COMPLETE',
+}
+
+export const ALLOWED_STATUSES: string[] = [
+  StatusEnum.CREATED,
+  StatusEnum.UPLOADED_CSV,
+  StatusEnum.PROCESSED_CSV,
+  StatusEnum.SCREENING1_WIP,
+  StatusEnum.SCREENING1_AWAITING_DECISION,
+  StatusEnum.SCREENING1_COMPLETE,
+  StatusEnum.SCREENING2_WIP,
+  StatusEnum.SCREENING2_AWAITING_DECISION,
+  StatusEnum.SCREENING2_COMPLETE,
+  StatusEnum.EVIDENCE_TABLE_COMPLETE,
+];
+
+export class Status {
+  constructor(copy?: Status) {
+    if (copy) {
+      Object.assign(this, copy);
+    }
+  }
+
+  @IsString()
+  screeningId!: string;
+
+  @IsString()
+  @IsIn(ALLOWED_STATUSES)
+  status!: string;
+}

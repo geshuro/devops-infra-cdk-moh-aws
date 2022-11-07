@@ -1,0 +1,44 @@
+{
+  "name": "@aws-ee/backend-common",
+  "version": "0.0.1",
+  "description": "Shared code",
+  "main": "lib/index.ts",
+  "scripts": {
+    "test": "NODE_ENV=test jest --config jest.config.js --coverage",
+    "test:watch": "NODE_ENV=test jest --config jest.config.js --watchAll",
+    "lint": "pnpm run compile && pnpm run lint:eslint && pnpm run lint:prettier",
+    "lint:eslint": "eslint --quiet --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "lint:prettier": "prettier --check --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "format": "pnpm run format:eslint && pnpm run format:prettier",
+    "format:eslint": "eslint --fix --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "format:prettier": "prettier --write --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "compile": "tsc --project ./tsconfig.json --noEmit",
+    "compile:watch": "tsc --project ./tsconfig.json --noEmit --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-ee/common": "workspace:*",
+    "@aws-ee/core": "workspace:*",
+    "@aws-ee/opensearch-api": "workspace:*",
+    "@casl/ability": "^5.3.1",
+    "@nestjs/common": "^7.6.13",
+    "@nestjs/config": "^1.0.3",
+    "@nestjs/core": "^7.6.13",
+    "winston": "^3.3.3",
+    "dynamoose": "^2.8.2",
+    "nestjs-dynamoose": "0.3.0",
+    "class-validator": "^0.13.1",
+    "reflect-metadata": "^0.1.13",
+    "nanoid": "^3.1.25",
+    "@nestjs/mapped-types": "^0.4.1",
+    "class-transformer": "^0.4.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@aws-ee/eslint-config": "workspace:*",
+    "eslint": "^7.21.0",
+    "prettier": "^2.3.1",
+    "regenerator-runtime": "^0.13.7"
+  }
+}

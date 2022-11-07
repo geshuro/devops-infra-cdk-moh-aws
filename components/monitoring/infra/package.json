@@ -1,0 +1,46 @@
+{
+  "name": "@aws-ee/monitoring-infra",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A library containing infrastructure monitoring",
+  "author": "aws-ee",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "lib/index.ts",
+  "scripts": {
+    "test": "NODE_ENV=test jest --config jest.config.js --coverage",
+    "test:watch": "NODE_ENV=test jest --config jest.config.js --watchAll",
+    "lint": "pnpm run compile && pnpm run lint:eslint && pnpm run lint:prettier",
+    "lint:eslint": "eslint --quiet --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "lint:prettier": "prettier --check --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "format": "pnpm run format:eslint && pnpm run format:prettier",
+    "format:eslint": "eslint --fix --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "format:prettier": "prettier --write --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "compile": "tsc --project ./tsconfig.json --noEmit",
+    "compile:watch": "tsc --project ./tsconfig.json --noEmit --watch"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigateway": "1.134.0",
+    "@aws-cdk/core": "1.134.0",
+    "@aws-ee/core-infra": "workspace:*",
+    "@nestjs/common": "^7.6.13",
+    "cdk-watchful": "^0.5.141",
+    "constructs": "3.3.161",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.6.6"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "1.134.0",
+    "@aws-ee/eslint-config": "workspace:*",
+    "@aws-ee/testing": "workspace:*",
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.33",
+    "@types/yargs": "^16.0.1",
+    "eslint": "^7.21.0",
+    "jest": "^26.6.3",
+    "jest-junit": "^12.0.0",
+    "prettier": "^2.3.1",
+    "regenerator-runtime": "^0.13.7",
+    "ts-jest": "^26.5.3",
+    "typescript": "~4.5.2"
+  }
+}

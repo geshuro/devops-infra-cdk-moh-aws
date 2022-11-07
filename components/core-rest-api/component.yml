@@ -1,0 +1,5 @@
+name: 'core-rest-api'
+dependencies:
+  # These are component dependencies not npm packages
+  - 'core'
+  - 'core-post-deployment'

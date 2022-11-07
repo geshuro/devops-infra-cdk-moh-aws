@@ -1,0 +1,28 @@
+@startuml SSTx Logout Flow
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/main/dist
+!includeurl AWSPuml/AWSCommon.puml
+!includeurl AWSPuml/General/all.puml
+!includeurl AWSPuml/ApplicationIntegration/APIGateway.puml
+!includeurl AWSPuml/Database/all.puml
+!includeurl AWSPuml/SecurityIdentityCompliance/Cognito.puml
+
+Title SSTx Logout Flow
+
+actor User as user
+InternetParticipant(ui, UI, Application Web UI)
+CognitoParticipant(loginUI, Hosted UI, IDP)
+APIGatewayParticipant(api, API, Main API)
+DynamoDBParticipant(revokedTokens, RevokedTokens, Revoked Tokens Table)
+CognitoParticipant(cognito, UserPool, IDP)
+
+user -> ui: Logout
+ui -> api: /api/oauth2/logout
+api -> cognito: Revoke refresh token
+cognito -> api: Refresh token revoked
+api -> revokedTokens: Insert record to block signature of current access token
+revokedTokens -> api: Record created
+api -> ui: Redirect to Cognito UI Logout URL, clear AuthN cookies
+ui -> loginUI: Logout
+loginUI -> ui: Logout complete
+
+@enduml

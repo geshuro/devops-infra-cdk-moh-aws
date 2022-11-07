@@ -1,0 +1,29 @@
+{
+  "name": "@aws-ee/config",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.ts",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "compile": "tsc --project ./tsconfig.json --noEmit",
+    "compile:watch": "tsc --project ./tsconfig.json --noEmit --watch"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigateway": "1.134.0",
+    "@aws-cdk/aws-iam": "1.134.0",
+    "@aws-cdk/aws-opensearchservice": "1.134.0",
+    "@aws-ee/core-infra": "workspace:*",
+    "@aws-ee/core-auth-cognito-infra": "workspace:*",
+    "@aws-ee/core-rest-api-infra": "workspace:*",
+    "@aws-ee/core-ui-infra": "workspace:*",
+    "@aws-ee/opensearch-api-infra": "workspace:*",
+    "@aws-ee/vpc-infra": "workspace:*"
+  },
+  "devDependencies": {
+    "@aws-ee/eslint-config": "workspace:*",
+    "eslint": "^7.21.0",
+    "prettier": "^2.3.1",
+    "typescript": "~4.5.2"
+  }
+}

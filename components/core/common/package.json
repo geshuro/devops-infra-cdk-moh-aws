@@ -1,0 +1,36 @@
+{
+  "name": "@aws-ee/common",
+  "version": "0.0.1",
+  "description": "Shared code",
+  "main": "lib/index.ts",
+  "scripts": {
+    "test": "NODE_ENV=test jest --config jest.config.js --coverage",
+    "test:watch": "NODE_ENV=test jest --config jest.config.js --watchAll",
+    "lint": "pnpm run compile && pnpm run lint:eslint && pnpm run lint:prettier",
+    "lint:eslint": "eslint --quiet --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "lint:prettier": "prettier --check --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "format": "pnpm run format:eslint && pnpm run format:prettier",
+    "format:eslint": "eslint --fix --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "format:prettier": "prettier --write --ignore-path .gitignore 'lib/**/*.{ts,tsx}'",
+    "compile": "tsc --project ./tsconfig.json --noEmit",
+    "compile:watch": "tsc --project ./tsconfig.json --noEmit --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
+    "lodash": "4.17.15"
+  },
+  "devDependencies": {
+    "@aws-ee/eslint-config": "workspace:*",
+    "eslint": "^7.21.0",
+    "jest": "^26.6.3",
+    "fast-check": "^2.18.0",
+    "jest-fast-check": "^1.0.2",
+    "prettier": "^2.3.1",
+    "regenerator-runtime": "^0.13.7",
+    "ts-jest": "^26.5.3"
+  }
+}

@@ -1,0 +1,21 @@
+isBuildServer: false
+
+awsRegion: us-east-1
+awsProfile:
+solutionName:
+envName:
+
+# Defines the email address of the default admin account that will be used for API integration tests. This
+# is needed for authorizing API calls and creating test users for additional testing. The user will be created
+# the first time the API integration tests are run and its password will be stored (encrypted) in Parameter Store.
+# IMPORTANT: This must be a valid email address so that emails sent to the address (if any) don't cause
+#            damage to the sender's email reputation. Unless email content needs to be verified as part of
+#            integration tests, it is recommended that one of Amazon SES's test addresses be used with an email
+#            tag (see https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-email-simulator.html).
+apiIntegrationTestAdminEmail: success+api-integration-test-default-admin@simulator.amazonses.com
+
+# Set this to true if debugging locally (not tested or verified to work yet)
+isLocal: false
+
+# Set this to the local API endpoint (only if isLocal = true)
+localApiEndpoint:  # http://localhost:4000

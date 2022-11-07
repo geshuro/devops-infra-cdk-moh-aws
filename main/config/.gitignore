@@ -1,0 +1,5 @@
+# In the helloworld repo, stage configs are excluded from source control.
+# Feel free to change this in individual PoCs as you see fit.
+
+lib/stages/**
+!lib/stages/example.ts

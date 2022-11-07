@@ -1,0 +1,400 @@
+{
+  "Entities": [
+    {
+      "Id": 0,
+      "Text": "morphine",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Score": 0.9949027299880981,
+      "BeginOffset": 282,
+      "EndOffset": 290,
+      "Attributes": [],
+      "Traits": [],
+      "RxNormConcepts": [
+        {
+          "Description": "morphine",
+          "Code": "7052",
+          "Score": 0.9823359847068787
+        },
+        {
+          "Description": "10 ML Morphine Sulfate 1 MG/ML Injection",
+          "Code": "1728800",
+          "Score": 0.45998236536979675
+        },
+        {
+          "Description": "2 ML Morphine Sulfate 0.5 MG/ML Injection",
+          "Code": "1728791",
+          "Score": 0.4499167203903198
+        },
+        {
+          "Description": "10 ML Morphine Sulfate 0.5 MG/ML Injection",
+          "Code": "1728783",
+          "Score": 0.41676732897758484
+        },
+        {
+          "Description": "1 ML Morphine Sulfate 15 MG/ML Prefilled Syringe",
+          "Code": "1232113",
+          "Score": 0.40571919083595276
+        }
+      ]
+    },
+    {
+      "Id": 1,
+      "Text": "fentanyl",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Score": 0.999371349811554,
+      "BeginOffset": 294,
+      "EndOffset": 302,
+      "Attributes": [],
+      "Traits": [],
+      "RxNormConcepts": [
+        {
+          "Description": "fentanyl",
+          "Code": "4337",
+          "Score": 0.9495826959609985
+        },
+        {
+          "Description": "Fentanyl 0.1 MG Sublingual Tablet",
+          "Code": "1053647",
+          "Score": 0.7480251789093018
+        },
+        {
+          "Description": "Fentanyl 0.2 MG Sublingual Tablet",
+          "Code": "1053652",
+          "Score": 0.7242258787155151
+        },
+        {
+          "Description": "Fentanyl 0.3 MG Sublingual Tablet",
+          "Code": "1053655",
+          "Score": 0.7227827906608582
+        },
+        {
+          "Description": "Fentanyl 0.6 MG Sublingual Tablet",
+          "Code": "1053661",
+          "Score": 0.7194626331329346
+        }
+      ]
+    },
+    {
+      "Id": 2,
+      "Text": "methadone",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Score": 0.9984861016273499,
+      "BeginOffset": 306,
+      "EndOffset": 315,
+      "Attributes": [],
+      "Traits": [],
+      "RxNormConcepts": [
+        {
+          "Description": "methadone",
+          "Code": "6813",
+          "Score": 0.9484893679618835
+        },
+        {
+          "Description": "Methadone Hydrochloride 10 MG Oral Tablet",
+          "Code": "864706",
+          "Score": 0.8032301664352417
+        },
+        {
+          "Description": "Methadone Hydrochloride 5 MG Oral Tablet",
+          "Code": "864718",
+          "Score": 0.7774258255958557
+        },
+        {
+          "Description": "Methadone Hydrochloride 10 MG/ML Injectable Solution",
+          "Code": "864714",
+          "Score": 0.6319884061813354
+        },
+        {
+          "Description": "Methadone Hydrochloride 10 MG Oral Tablet [Dolophine]",
+          "Code": "864708",
+          "Score": 0.33722445368766785
+        }
+      ]
+    },
+    {
+      "Id": 3,
+      "Text": "oxycodone",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Score": 0.9986698627471924,
+      "BeginOffset": 319,
+      "EndOffset": 328,
+      "Attributes": [],
+      "Traits": [],
+      "RxNormConcepts": [
+        {
+          "Description": "oxycodone",
+          "Code": "7804",
+          "Score": 0.9676380157470703
+        },
+        {
+          "Description": "12 HR Oxycodone Hydrochloride 30 MG Extended Release Oral Tablet",
+          "Code": "1049574",
+          "Score": 0.745823085308075
+        },
+        {
+          "Description": "12 HR Oxycodone Hydrochloride 60 MG Extended Release Oral Tablet",
+          "Code": "1049593",
+          "Score": 0.3773578107357025
+        },
+        {
+          "Description": "12 HR Oxycodone Hydrochloride 10 MG Extended Release Oral Tablet",
+          "Code": "1049502",
+          "Score": 0.35796403884887695
+        },
+        {
+          "Description": "12 HR Oxycodone Hydrochloride 15 MG Extended Release Oral Tablet",
+          "Code": "1049543",
+          "Score": 0.2843609154224396
+        }
+      ]
+    },
+    {
+      "Id": 4,
+      "Text": "hydromorphone",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Score": 0.9983060359954834,
+      "BeginOffset": 332,
+      "EndOffset": 345,
+      "Attributes": [],
+      "Traits": [],
+      "RxNormConcepts": [
+        {
+          "Description": "hydromorphone",
+          "Code": "3423",
+          "Score": 0.9402032494544983
+        },
+        {
+          "Description": "1 ML Hydromorphone Hydrochloride 1 MG/ML Cartridge",
+          "Code": "1724383",
+          "Score": 0.6058394312858582
+        },
+        {
+          "Description": "1 ML Hydromorphone Hydrochloride 10 MG/ML Injection",
+          "Code": "1724338",
+          "Score": 0.5160219073295593
+        },
+        {
+          "Description": "50 ML Hydromorphone Hydrochloride 10 MG/ML Injection",
+          "Code": "1724341",
+          "Score": 0.4225260019302368
+        },
+        {
+          "Description": "5 ML Hydromorphone Hydrochloride 10 MG/ML Injection",
+          "Code": "1724340",
+          "Score": 0.4161379039287567
+        }
+      ]
+    },
+    {
+      "Id": 9,
+      "Text": "NMDA receptor antagonists",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Score": 0.3990291953086853,
+      "BeginOffset": 439,
+      "EndOffset": 464,
+      "Attributes": [],
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.5328877568244934
+        }
+      ],
+      "RxNormConcepts": [
+        {
+          "Description": "Naja naja venom",
+          "Code": "1310461",
+          "Score": 0.306977242231369
+        },
+        {
+          "Description": "cardiotoxin III, Naja naja atra",
+          "Code": "2043924",
+          "Score": 0.1338108777999878
+        },
+        {
+          "Description": "DLin-MC3-DMA",
+          "Code": "2053488",
+          "Score": 0.06383035331964493
+        },
+        {
+          "Description": "oleamido mea-sulfosuccinate",
+          "Code": "1370650",
+          "Score": 0.01715029403567314
+        },
+        {
+          "Description": "PPG-51/SMDI copolymer",
+          "Code": "1721621",
+          "Score": 0.016956139355897903
+        }
+      ]
+    },
+    {
+      "Id": 12,
+      "Text": "local anesthetics",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Score": 0.8049668073654175,
+      "BeginOffset": 510,
+      "EndOffset": 527,
+      "Attributes": [],
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.5153787136077881
+        }
+      ],
+      "RxNormConcepts": [
+        {
+          "Description": "royal jelly 500 MG Oral Capsule",
+          "Code": "252831",
+          "Score": 0.04105545952916145
+        },
+        {
+          "Description": "lyral",
+          "Code": "1420141",
+          "Score": 0.019654029980301857
+        },
+        {
+          "Description": "Coal Tar 0.0125 MG/MG Topical Gel [Psoriasin]",
+          "Code": "1043397",
+          "Score": 0.011735919862985611
+        },
+        {
+          "Description": "royal jelly 200 MG Oral Capsule",
+          "Code": "241052",
+          "Score": 0.010341310873627663
+        },
+        {
+          "Description": "royal jelly 100 MG Oral Capsule",
+          "Code": "199637",
+          "Score": 0.007349885068833828
+        }
+      ]
+    },
+    {
+      "Id": 14,
+      "Text": "tinazidine",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Score": 0.9804233312606812,
+      "BeginOffset": 550,
+      "EndOffset": 560,
+      "Attributes": [],
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.5879903435707092
+        }
+      ],
+      "RxNormConcepts": [
+        {
+          "Description": "tizanidine",
+          "Code": "57258",
+          "Score": 0.5722652077674866
+        },
+        {
+          "Description": "tizanidine 4 MG Oral Tablet",
+          "Code": "313413",
+          "Score": 0.2546016275882721
+        },
+        {
+          "Description": "tizanidine 2 MG Oral Capsule",
+          "Code": "485486",
+          "Score": 0.2514301538467407
+        },
+        {
+          "Description": "tizanidine 2 MG Oral Tablet",
+          "Code": "313412",
+          "Score": 0.24984119832515717
+        },
+        {
+          "Description": "tizanidine 2 MG Oral Capsule [Zanaflex]",
+          "Code": "583165",
+          "Score": 0.2042093127965927
+        }
+      ]
+    },
+    {
+      "Id": 15,
+      "Text": "trihexiphenidyl",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Score": 0.9870469570159912,
+      "BeginOffset": 564,
+      "EndOffset": 579,
+      "Attributes": [],
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.6695126891136169
+        }
+      ],
+      "RxNormConcepts": [
+        {
+          "Description": "trihexyphenidyl",
+          "Code": "10811",
+          "Score": 0.9469054341316223
+        },
+        {
+          "Description": "Trihexyphenidyl Hydrochloride 5 MG Oral Tablet",
+          "Code": "905283",
+          "Score": 0.7177915573120117
+        },
+        {
+          "Description": "Trihexyphenidyl Hydrochloride 2 MG Oral Tablet",
+          "Code": "905269",
+          "Score": 0.4871532917022705
+        },
+        {
+          "Description": "Trihexyphenidyl Hydrochloride 0.4 MG/ML Oral Solution",
+          "Code": "905273",
+          "Score": 0.12047585844993591
+        }
+      ]
+    },
+    {
+      "Id": 16,
+      "Text": "botulinum toxin A",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Score": 0.9770557880401611,
+      "BeginOffset": 583,
+      "EndOffset": 600,
+      "Attributes": [],
+      "Traits": [],
+      "RxNormConcepts": [
+        {
+          "Description": "botulinum toxin type A",
+          "Code": "1712",
+          "Score": 0.903691828250885
+        },
+        {
+          "Description": "incobotulinumtoxinA 200 UNT Injection",
+          "Code": "1000107",
+          "Score": 0.2989967167377472
+        },
+        {
+          "Description": "incobotulinumtoxinA 50 UNT Injection",
+          "Code": "1009459",
+          "Score": 0.22918972373008728
+        },
+        {
+          "Description": "onabotulinumtoxinA 50 UNT Injection",
+          "Code": "1726293",
+          "Score": 0.18416930735111237
+        },
+        {
+          "Description": "onabotulinumtoxinA 100 UNT Injection [Botox Cosmetic]",
+          "Code": "1726313",
+          "Score": 0.15827639400959015
+        }
+      ]
+    }
+  ],
+  "ModelVersion": "20200504.1.0"
+}

@@ -1,0 +1,13 @@
+packages:
+  - components/core/**
+  - components/core-auth-cognito/**
+  - components/core-post-deployment/**
+  - components/core-rest-api/**
+  - components/core-ui/**
+  - components/monitoring/**
+  - components/opensearch/**
+  - components/testing/**
+  - components/vpc/**
+  - main/**
+  - tools/**
+  - '!main/infra/cdk.out/**'

@@ -1,0 +1,7 @@
+{
+  "clinicalQuestion": "Which analgesics and at which doses are more efffective and safe in managing moderate or severe pain in paediatric palliative care?",
+  "picoP": "Boys, girls and adolescents up to the age of 18 years with a life-threatening disease, who have entered an advanced phase of it or are in a terminal situation. Pediatric palliative care patients who are in the second and third level of care",
+  "picoI": "Major opioids: morphine or fentanyl or methadone or oxycodone or hydromorphone or another major opioid. Adjuvants: corticosteroids or bisphosphonates or anticonvulsants or NMDA receptor antagonists or adrenergic agonists or antidepressants or local anesthetics or benzodiazepines or tinazidine or trihexiphenidyl or botulinum toxin A.",
+  "picoC": "any", 
+  "picoO": "Pain Relief, Adverse effects, Quality of life of the child or adolescent and of the parents or caregivers, Need for rescue analgesia, Need for hospitalizations"
+}

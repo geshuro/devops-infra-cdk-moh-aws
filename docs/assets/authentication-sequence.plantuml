@@ -1,0 +1,29 @@
+@startuml SSTx Authentication Flow
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/main/dist
+!includeurl AWSPuml/AWSCommon.puml
+!includeurl AWSPuml/General/all.puml
+!includeurl AWSPuml/FrontEndWebMobile/all.puml
+!includeurl AWSPuml/ApplicationIntegration/APIGateway.puml
+!includeurl AWSPuml/Database/all.puml
+!includeurl AWSPuml/SecurityIdentityCompliance/Cognito.puml
+
+Title SSTx Authentication Flow
+
+actor User as user
+InternetParticipant(ui, UI, Application Web UI)
+CognitoParticipant(loginUI, Hosted UI, IDP)
+APIGatewayParticipant(api, API, Main API)
+CognitoParticipant(cognito, UserPool, IDP)
+
+user -> ui: Login
+ui -> api: /api/oauth2/authorize
+api -> ui: Login Redirect URL
+ui -> loginUI: Redirect
+loginUI -> user: Ask for credentials
+user -> loginUI: User name and Password
+loginUI -> ui: Redirect to application with AuthCode
+ui -> api: /api/oauth2/token with AuthCode
+api -> cognito: Exchange AuthCode for tokens
+cognito -> api: access and refresh token
+api -> ui: Set tokens as cookies
+@enduml

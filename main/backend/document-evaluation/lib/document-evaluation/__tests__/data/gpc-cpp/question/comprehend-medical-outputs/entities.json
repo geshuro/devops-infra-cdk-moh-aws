@@ -1,0 +1,374 @@
+{
+  "Entities": [
+    {
+      "Id": 20,
+      "BeginOffset": 57,
+      "EndOffset": 59,
+      "Score": 0.9998987913131714,
+      "Text": "18",
+      "Category": "PROTECTED_HEALTH_INFORMATION",
+      "Type": "AGE",
+      "Traits": []
+    },
+    {
+      "Id": 21,
+      "BeginOffset": 273,
+      "EndOffset": 280,
+      "Score": 0.403193861246109,
+      "Text": "opioids",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 1,
+      "BeginOffset": 282,
+      "EndOffset": 290,
+      "Score": 0.9949027299880981,
+      "Text": "morphine",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 2,
+      "BeginOffset": 294,
+      "EndOffset": 302,
+      "Score": 0.999371349811554,
+      "Text": "fentanyl",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 3,
+      "BeginOffset": 306,
+      "EndOffset": 315,
+      "Score": 0.9984861016273499,
+      "Text": "methadone",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 4,
+      "BeginOffset": 319,
+      "EndOffset": 328,
+      "Score": 0.9986698627471924,
+      "Text": "oxycodone",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 5,
+      "BeginOffset": 332,
+      "EndOffset": 345,
+      "Score": 0.9983060359954834,
+      "Text": "hydromorphone",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 6,
+      "BeginOffset": 371,
+      "EndOffset": 380,
+      "Score": 0.22627539932727814,
+      "Text": "Adjuvants",
+      "Category": "MEDICATION",
+      "Type": "BRAND_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 22,
+      "BeginOffset": 371,
+      "EndOffset": 380,
+      "Score": 0.35596397519111633,
+      "Text": "Adjuvants",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 7,
+      "BeginOffset": 382,
+      "EndOffset": 397,
+      "Score": 0.8614557385444641,
+      "Text": "corticosteroids",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 23,
+      "BeginOffset": 382,
+      "EndOffset": 397,
+      "Score": 0.6299418807029724,
+      "Text": "corticosteroids",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 8,
+      "BeginOffset": 401,
+      "EndOffset": 416,
+      "Score": 0.7982227206230164,
+      "Text": "bisphosphonates",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 24,
+      "BeginOffset": 401,
+      "EndOffset": 416,
+      "Score": 0.37291932106018066,
+      "Text": "bisphosphonates",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 9,
+      "BeginOffset": 420,
+      "EndOffset": 435,
+      "Score": 0.706292450428009,
+      "Text": "anticonvulsants",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.40728357434272766
+        }
+      ]
+    },
+    {
+      "Id": 25,
+      "BeginOffset": 420,
+      "EndOffset": 435,
+      "Score": 0.36500513553619385,
+      "Text": "anticonvulsants",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 10,
+      "BeginOffset": 439,
+      "EndOffset": 464,
+      "Score": 0.3990291953086853,
+      "Text": "NMDA receptor antagonists",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.5328877568244934
+        }
+      ]
+    },
+    {
+      "Id": 26,
+      "BeginOffset": 439,
+      "EndOffset": 464,
+      "Score": 0.7149366140365601,
+      "Text": "NMDA receptor antagonists",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 11,
+      "BeginOffset": 468,
+      "EndOffset": 487,
+      "Score": 0.6379081606864929,
+      "Text": "adrenergic agonists",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.6698082089424133
+        }
+      ]
+    },
+    {
+      "Id": 27,
+      "BeginOffset": 468,
+      "EndOffset": 487,
+      "Score": 0.7833311557769775,
+      "Text": "adrenergic agonists",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 12,
+      "BeginOffset": 491,
+      "EndOffset": 506,
+      "Score": 0.7761353850364685,
+      "Text": "antidepressants",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.7395241856575012
+        }
+      ]
+    },
+    {
+      "Id": 28,
+      "BeginOffset": 491,
+      "EndOffset": 506,
+      "Score": 0.8696820735931396,
+      "Text": "antidepressants",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 13,
+      "BeginOffset": 510,
+      "EndOffset": 527,
+      "Score": 0.8049668073654175,
+      "Text": "local anesthetics",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.5153787136077881
+        }
+      ]
+    },
+    {
+      "Id": 29,
+      "BeginOffset": 510,
+      "EndOffset": 527,
+      "Score": 0.5781607627868652,
+      "Text": "local anesthetics",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 14,
+      "BeginOffset": 531,
+      "EndOffset": 546,
+      "Score": 0.9968095421791077,
+      "Text": "benzodiazepines",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.7128329873085022
+        }
+      ]
+    },
+    {
+      "Id": 15,
+      "BeginOffset": 550,
+      "EndOffset": 560,
+      "Score": 0.9804233312606812,
+      "Text": "tinazidine",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.5879903435707092
+        }
+      ]
+    },
+    {
+      "Id": 16,
+      "BeginOffset": 564,
+      "EndOffset": 579,
+      "Score": 0.9870469570159912,
+      "Text": "trihexiphenidyl",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": [
+        {
+          "Name": "NEGATION",
+          "Score": 0.6695126891136169
+        }
+      ]
+    },
+    {
+      "Id": 17,
+      "BeginOffset": 583,
+      "EndOffset": 600,
+      "Score": 0.9770557880401611,
+      "Text": "botulinum toxin A",
+      "Category": "MEDICATION",
+      "Type": "GENERIC_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 18,
+      "BeginOffset": 626,
+      "EndOffset": 637,
+      "Score": 0.45861074328422546,
+      "Text": "Pain Relief",
+      "Category": "MEDICAL_CONDITION",
+      "Type": "DX_NAME",
+      "Traits": [
+        {
+          "Name": "SYMPTOM",
+          "Score": 0.48259106278419495
+        },
+        {
+          "Name": "DIAGNOSIS",
+          "Score": 0.595464289188385
+        }
+      ]
+    },
+    {
+      "Id": 30,
+      "BeginOffset": 626,
+      "EndOffset": 637,
+      "Score": 0.3310896158218384,
+      "Text": "Pain Relief",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    },
+    {
+      "Id": 19,
+      "BeginOffset": 639,
+      "EndOffset": 654,
+      "Score": 0.9317322373390198,
+      "Text": "Adverse effects",
+      "Category": "MEDICAL_CONDITION",
+      "Type": "DX_NAME",
+      "Traits": [
+        {
+          "Name": "SYMPTOM",
+          "Score": 0.5338788032531738
+        },
+        {
+          "Name": "DIAGNOSIS",
+          "Score": 0.5275403261184692
+        }
+      ]
+    },
+    {
+      "Id": 31,
+      "BeginOffset": 742,
+      "EndOffset": 758,
+      "Score": 0.9266762733459473,
+      "Text": "rescue analgesia",
+      "Category": "TEST_TREATMENT_PROCEDURE",
+      "Type": "TREATMENT_NAME",
+      "Traits": []
+    }
+  ],
+  "UnmappedAttributes": [],
+  "ModelVersion": "1.0.0"
+}

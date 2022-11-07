@@ -1,0 +1,35 @@
+.pagination-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.pagination-container .pagination-element {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.pagination-container .pagination-button {
+  margin: 0 2px;
+  padding: 8px 16px;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+  background: var(--chakra-colors-gray-100);
+}
+.pagination-container .pagination-button.active {
+  background-color: var(--chakra-colors-blue-500);
+  color: white;
+}
+.pagination-container .pagination-button:hover {
+  background-color: var(--chakra-colors-gray-200);
+}
+
+.pagination-container .pagination-input {
+  width: 5em;
+  margin: 0 5px;
+  padding: 3px;
+  outline: 2px solid var(--chakra-colors-gray-200);
+}

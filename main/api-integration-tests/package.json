@@ -1,0 +1,36 @@
+{
+  "name": "api-integration-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "author": "aws-ee",
+  "main": "index.js",
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "@aws-ee/api-testing-framework": "workspace:*",
+    "lodash": "^4.17.21",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@aws-ee/eslint-config": "workspace:*",
+    "jest": "^26.6.3",
+    "jest-junit": "^12.0.0",
+    "prettier": "^2.3.1",
+    "pretty-quick": "^3.1.0",
+    "regenerator-runtime": "^0.13.7",
+    "ts-jest": "^26.5.3",
+    "typescript": "~4.5.2"
+  },
+  "scripts": {
+    "testApi": "./run.sh",
+    "testApiCore": "cd ../../components/core-rest-api/tests/api-integration-tests && pnpm testApi --",
+    "testApiMain": "NODE_ENV=test jest --config jest.config.ts --runInBand main/api-integration-tests/__tests__",
+    "testApiMain:watch": "NODE_ENV=test jest --config jest.config.ts  --passWithNoTests --watchAll",
+    "lint": "pnpm run lint:eslint && pnpm run lint:prettier",
+    "lint:eslint": "eslint --ignore-path .gitignore . ",
+    "lint:prettier": "prettier --check --ignore-path .gitignore '**/*.ts' ",
+    "format": "pnpm run format:eslint && pnpm run format:prettier",
+    "format:eslint": "eslint --fix --ignore-path .gitignore . ",
+    "format:prettier": "prettier --write --ignore-path .gitignore '**/*.ts' "
+  }
+}

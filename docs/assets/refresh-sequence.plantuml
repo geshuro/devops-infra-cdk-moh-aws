@@ -1,0 +1,49 @@
+@startuml SSTx API Interaction Flow
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/main/dist
+!includeurl AWSPuml/AWSCommon.puml
+!includeurl AWSPuml/General/all.puml
+!includeurl AWSPuml/FrontEndWebMobile/all.puml
+!includeurl AWSPuml/ApplicationIntegration/APIGateway.puml
+!includeurl AWSPuml/Database/all.puml
+!includeurl AWSPuml/Compute/all.puml
+!includeurl AWSPuml/SecurityIdentityCompliance/Cognito.puml
+
+Title SSTx API Interaction Flow
+
+actor User as user
+InternetParticipant(ui, UI, Application Web UI)
+LambdaParticipant(authorizer, Request Authorizer, Custom Request Authorizer)
+APIGatewayParticipant(api, API, Main API)
+DynamoDBParticipant(revokedTokens, RevokedTokens, Revoked Tokens Table)
+CognitoParticipant(cognito, UserPool, IDP)
+
+user -> ui: View or edit data
+
+ui -> authorizer: Call API with access token cookie
+alt access token is revoked or expired
+    authorizer -[#red]> ui: 401 Unauthorized
+else access token valid
+    authorizer -> api: Token is verified
+    api -> revokedTokens: Is token on revoked list?
+    alt token is revoked
+        revokedTokens -> api: Yes
+        api -[#red]> ui: 401 Unauthorized
+    else token is not revoked
+        revokedTokens -> api: No
+        api -> ui: returns requested data
+    end
+end
+
+opt If the call failed with 401, attempt a token refresh
+    ui -> api: /api/oauth2/refresh Using the refresh token
+    api -> cognito: Get a new access token by providing the refresh token
+    alt refresh token is revoked or expired
+        cognito -[#red]> api: refresh token invalid
+        api -[#red]> ui: 401 Unauthorized
+    else refresh token is valid
+        cognito -> api: access token
+        api -> ui: Set new access token cookie
+        ui -> authorizer: Retry call with new access token
+    end
+end
+@enduml
